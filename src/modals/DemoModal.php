@@ -4,36 +4,64 @@ namespace App\modals;
 
 class DemoModal
 {
-    public function getDataModal($params)
+    private $db;
+
+    public function __construct($db)
     {
-        $data = [];
-        for ($i = 1; $i <= 10; $i++) {
-            $data[] = [
-                'id' => $i,
-                'name' => 'Item ' . $i,
-                'description' => 'This is the description for item ' . $i,
-                'price' => rand(10, 100),
-                'created_at' => date('Y-m-d H:i:s')
-            ];
-        }
-        return $data;
-    }
-    public function postDataModal($data)
-    {
-        if (isset($data['name']) && !empty($data['name'])) {
-            return [
-                'status' => 'success',
-                'message' => 'Data posted successfully',
-                'data' => $data
-            ];
-        } else {
-            return [
-                'status' => 'error',
-                'message' => 'Failed to post data: Missing name field'
-            ];
-        }
+        $this->db = $db;
     }
 
+    public function getDataModal($params)
+    {   
+        if ($params) {
+            var_dump($params);
+        } else {
+            var_dump($params);
+        }
+        
+        $stmt = $this->db->query("SELECT * FROM `student`");
+        return $stmt->fetchAll();
+    }
+    
+    public function postData($data)
+    {
+
+        $bindValue = [
+            "user_account" => null,
+            "user_name" => null,
+            "user_password" => null,
+            "birth" => null,
+        ];
+
+        $insert_cond = '';
+        $value_cond = '';
+
+        foreach ($bindValue as $key => $value ){
+            if(array_key_exists($key,$data)){
+                $bindValue[$key] = $data[$key];
+                $insert_cond .= "{$key},";#
+                $value_cond .= ":{$key},";
+
+            } else {
+                unset($bindValue[$key]);
+            }
+        }
+
+        $insert_cond = rtrim( $insert_cond ,',');
+        $value_cond = rtrim( $value_cond ,',');
+
+        $sql = "INSERT INTO `student` ($insert_cond) 
+                VALUES ($value_cond)
+                ";
+            
+        $stmt = $this->db->prepare($sql);
+        if( $stmt->execute($bindValue)){
+            return ['status'=> 'success','messsage'=>'新增成功 !'];
+        } else {
+            $errorInfo = $stmt->errorInfo();
+            return ['status'=> 'failure','messsage'=> $stmt->errorInfo()];
+        }       
+    }
     public function patchDataModal($data)
     {
         if (isset($data['id']) && !empty($data['id'])) {
@@ -49,6 +77,7 @@ class DemoModal
             ];
         }
     }
+
     public function deleteDataModal($data)
     {
         if (isset($data['id']) && !empty($data['id'])) {

@@ -1,37 +1,41 @@
 <?php
 
+namespace App\Controllers;
 
-namespace App\controllers;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\modals\DemoModal;
 
 class DemoController
 {
-    // protected $db;
+    private $container;
+    private $db;
 
-    public function __construct($db)
+    public function __construct($container)
     {
-        // $this->db = $db;
+        $this->container = $container;
+        $this->db = $container->get('db');
     }
-    public function getData($request, $response, $args)
+    public function getData( $request,  $response,  $args)
     {
         $params = $request->getQueryParams();
-        $DemoModal = new DemoModal();
+        $id = $args['id'] ?? null;
+        $DemoModal = new DemoModal($this->db); 
         $result = $DemoModal->getDataModal($params);
         $response->getBody()->write(json_encode($result));
-        $response->withHeader('Content-Type', 'application/json');
+        $response = $response->withHeader('Content-Type', 'application/json');
         return $response;
     }
-    public function postData($request, $response, $args)
+    public function postData(Request $request, Response $response, array $args): Response
     {
         $data = $request->getParsedBody();
-        $DemoModal = new DemoModal();
-        $result = $DemoModal->postDataModal($data);
-        $response->getBody()->write(json_encode($result));
-        $response->withHeader('Content-Type', 'application/json');
+        $DemoModal = new DemoModal($this->db);
+        $result = $DemoModal->postData($data);
+        $response->getBody()->write(json_encode( $result ));
+        $response = $response->withHeader('Content-Type', 'application/json');
         return $response;
     }
+
     public function patchData($request, $response, $args)
     {
 
