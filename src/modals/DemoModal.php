@@ -13,14 +13,39 @@ class DemoModal
 
     public function getDataModal($params)
     {   
-        if ($params) {
-            var_dump($params);
+        
+        $bindValue = [
+            "name" => null,
+            "user_account" => null,
+            "user_password" => null,
+
+        ];
+
+        $where_cond = '';
+
+        foreach ($bindValue as $key => $value){
+            if (array_key_exists($key,$params)) {
+                $bindValue[$key] = $params[$key];
+                $where_cond .= " and {$key} = :{$key} ";
+            } else {
+                unset($bindValue[$key]);
+            };
+        };
+
+        $sql = " SELECT *
+                FROM student
+                WHERE True 
+               {$where_cond}
+        ";
+        $stmt = $this->db->prepare($sql);
+        if ($stmt->execute($bindValue)) {
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            return ['status'=> 'success','messsage'=>'查詢成功 !',"data"=>$result];
         } else {
-            var_dump($params);
+            $errorInfo = $stmt->errorInfo();
+            return ['status'=> 'failure','messsage'=> $stmt->errorInfo()];
         }
         
-        $stmt = $this->db->query("SELECT * FROM `student`");
-        return $stmt->fetchAll();
     }
     
     public function postData($data)
@@ -39,7 +64,7 @@ class DemoModal
         foreach ($bindValue as $key => $value ){
             if(array_key_exists($key,$data)){
                 $bindValue[$key] = $data[$key];
-                $insert_cond .= "{$key},";#
+                $insert_cond .= "{$key},";
                 $value_cond .= ":{$key},";
 
             } else {
