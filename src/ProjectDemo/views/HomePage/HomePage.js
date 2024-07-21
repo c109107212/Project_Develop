@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useCallback, useState } from 'react';
 import './HomePage.css';
 import { MyContext } from '../../../Context/MyContext';
-import { Modal, Form, Input, Button, Select } from 'antd';
+import { Modal, Form, Input, Button, Select,notification  } from 'antd';
 import { useAxios } from '../../components/useAxios';
 
 const { Option } = Select;
@@ -29,7 +29,7 @@ const HomePage = () => {
   useEffect(() => {
     if (axiosData.length > 0) {
       const optionsElements = axiosData.map(account => (
-        <Option key={account.id} value={account.user_account}>{account.user_name}</Option>
+        <Option key={account.id} value={account.user_account}>{account.user_account}</Option>
       ));
       setOptions(optionsElements);
     }
@@ -70,29 +70,57 @@ const HomePage = () => {
   const insert = () => {
     setIsModalVisible(true);
   };
-
   const checkinput = () => {
     form.validateFields()
       .then(values => {
-        postData(values) // 提交新用戶數據
-          .then(()=>{
-            setIsModalVisible(false); // 隱藏模態框
-            form.resetFields(); // 重置表單
-            // alert("新增成功")
-            alert(values)
-          }
-          )
-          .catch(()=>{
-            alert("新增失敗");
+        console.log(values.user_account);
+        const params = { user_account: values.user_account };
+        getData(params)
+          .then(response => {
+            const fetchedData = response.data; // 使用本地變量來存儲查詢結果
+            if (fetchedData && fetchedData.length > 0) {
+              notification.error({
+                message: '帳號已存在',
+                description: '帳號已存在，請重新輸入。',
+              });
+            } else {
+              postData(values) // 提交新用戶數據
+                .then(() => {
+                  notification.success({
+                    message: '新增成功',
+                    description: '使用者帳號新增成功。',
+                  });
+                  setIsModalVisible(false); // 隱藏模態框
+                  form.resetFields(); // 重置表單
+                  fetchData(); // 重新加載數據
+                })
+                .catch(error => {
+                  notification.error({
+                    message: '新增失敗',
+                    description: '使用者帳號新增失敗。',
+                  });
+                  console.error('Error posting data:', error);
+                });
+            }
           })
-        
+          .catch(error => {
+            notification.error({
+              message: '查詢失敗',
+              description: '查詢帳號信息失敗。',
+            });
+            console.error('Error getting data:', error);
+          });
       })
-
       .catch(info => {
-        alert("新增失敗");
+        notification.error({
+          message: '驗證失敗',
+          description: '請輸入所有必填欄位。',
+        });
         console.log('Validate Failed:', info);
       });
   };
+  
+  
 
   const Inputcancel = () => {
     setIsModalVisible(false);

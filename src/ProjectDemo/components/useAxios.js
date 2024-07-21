@@ -26,24 +26,16 @@ const useAxios = (config = {}) => {
 
 
     const postData = (data) => {
-        
-        axios.post('/postData',
-            data
-        )
+        return axios.post('/postData', data)
             .then((response) => {
-                let responseData = response.data
-                let status = responseData?.status
-                
+                let responseData = response.data;
+                let status = responseData?.status;
+                return status;
             })
-            .catch(() => {
-                console.log(
-                    {
-                        axiosMode: "post",
-                        status: "error"
-                    }
-                )
-            })
-
+            .catch((error) => {
+                console.error('Error posting data:', error);
+                throw error;
+            });
     }
     const patchData = (data) => {
         
