@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers;
+namespace App\controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -8,8 +8,8 @@ use App\modals\DemoModal;
 
 class DemoController
 {
-    private $container;
-    private $db;
+    protected $container;
+    protected $db;
 
     public function __construct($container)
     {
@@ -35,6 +35,7 @@ class DemoController
         $response = $response->withHeader('Content-Type', 'application/json');
         return $response;
     }
+    
 
     public function patchData($request, $response, $args)
     {
