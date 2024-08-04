@@ -12,25 +12,25 @@ class DemoModel extends Model
 
     public function getData($params)
     {
-        // 能接受帶入的值
-        $bindvalues = [
-            "user_code" => null,
+        
+        $getvalues = [
+            "birthday" => null,
             "user_name" => null,
             "user_account" => null,
             "user_password" => null
         ];
 
-        foreach ($bindvalues as $key => $value) {
+        foreach ($getvalues as $key => $value) {
             if (array_key_exists($key, $params)) {
-                $bindvalues[$key] = $params[$key];
+                $getvalues[$key] = $params[$key];
             } else {
-                unset($bindvalues[$key]);
+                unset($getvalues[$key]);
             }
         }
 
         $condition = "";
         $condition_values = [
-            "user_code" => " AND user_code = :user_code",
+            "birthday" => " AND birthday = :birthday",
             "user_name" => " AND user_name = :user_name",
             "user_account" => " AND user_account = :user_account",
             "user_password" => " AND user_password = :user_password",
@@ -41,13 +41,11 @@ class DemoModel extends Model
             if (array_key_exists($key, $params)) {
                 $condition .= $value;
             } else {
-                unset($bindvalues[$key]);
+                unset($getvalues[$key]);
             }
         }
         $sql_default = "SELECT *
-                        FROM demo.user ";
-
-        // 放置條件
+                        FROM `student` ";
         $sql_default = "SELECT *
                         FROM(
                             {$sql_default}
@@ -55,12 +53,18 @@ class DemoModel extends Model
                         WHERE TRUE {$condition}
                         ";
 
-        $result = DB::select($sql_default, $bindvalues);
+        $result = DB::select($sql_default, $getvalues);
 
         return $result;
     }
     public function postData($data)
     {
-        return $data;
+        $data = $request->all();
+
+        // 顯示資料（這裡僅作為示例，你可以根據需求進行處理）
+        return response()->json([
+            'received_data' => $data
+        ]);
+        return $result;
     }
 }

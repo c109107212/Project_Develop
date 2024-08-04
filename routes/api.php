@@ -28,8 +28,8 @@ Route::group([], function () {
 });
 // getData
 Route::group([], function () {
-    Route::get('/data', [DemoController::class, 'getData']);
-    Route::post('/data', [DemoController::class, 'postData']);
+    Route::get('/getData', [DemoController::class, 'getData']);
+    Route::post('/postData', [DemoController::class, 'postData']);
     Route::patch('/data', [DemoController::class, 'patchData']);
     Route::delete('/data', [DemoController::class, 'deleteData']);
 });
