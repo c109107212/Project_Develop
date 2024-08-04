@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+
 
 class DemoModel extends Model
 {
@@ -14,7 +16,7 @@ class DemoModel extends Model
     {
         
         $getvalues = [
-            "birthday" => null,
+            "birth" => null,
             "user_name" => null,
             "user_account" => null,
             "user_password" => null
@@ -30,7 +32,7 @@ class DemoModel extends Model
 
         $condition = "";
         $condition_values = [
-            "birthday" => " AND birthday = :birthday",
+            "birth" => " AND birth = :birth",
             "user_name" => " AND user_name = :user_name",
             "user_account" => " AND user_account = :user_account",
             "user_password" => " AND user_password = :user_password",
@@ -57,14 +59,21 @@ class DemoModel extends Model
 
         return $result;
     }
+    protected $fillable = ['id','birth', 'user_name', 'user_account', 'user_password'];
     public function postData($data)
     {
-        $data = $request->all();
-
-        // 顯示資料（這裡僅作為示例，你可以根據需求進行處理）
-        return response()->json([
-            'received_data' => $data
+        
+        $sql = "INSERT INTO student (birth, user_name, user_account, user_password) VALUES (:birth, :user_name, :user_account, :user_password)";
+        
+        $result = DB::insert($sql, [
+            'birth' => $data['birth'],
+            'user_name' => $data['user_name'],
+            'user_account' => $data['user_account'],
+            'user_password' => $data['user_password'], 
         ]);
-        return $result;
+    
+        return $result; 
     }
+
+    
 }
