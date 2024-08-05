@@ -51,9 +51,23 @@ class DemoController extends Controller
         return response()->json($user, 200);
     }
 
-    public function DeleteData($request)
+    public function deleteData(Request $request)
     {
-        return response()->json($user, 200);
+        try {
+            $data = $request->all();
+            $DemoModel = new DemoModel();
+            $result = $DemoModel->deleteData($data['id']);  
+            return response()->json([
+                'status' => 'success',
+                'data' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'failure',
+                'message' => 'An error occurred while deleting data.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
 

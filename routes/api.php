@@ -31,5 +31,5 @@ Route::group([], function () {
     Route::get('/getData', [DemoController::class, 'getData']);
     Route::post('/postData', [DemoController::class, 'postData']);
     Route::patch('/data', [DemoController::class, 'patchData']);
-    Route::delete('/deleteData', [DemoController::class, 'deleteData']);
+    Route::post('/deleteData', [DemoController::class, 'deleteData']);
 });

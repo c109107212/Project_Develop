@@ -59,7 +59,7 @@ class DemoModel extends Model
 
         return $result;
     }
-    protected $fillable = ['id','birth', 'user_name', 'user_account', 'user_password'];
+    // protected $fillable = ['id','birth', 'user_name', 'user_account', 'user_password'];
     public function postData($data)
     {
         
@@ -73,6 +73,16 @@ class DemoModel extends Model
         ]);
     
         return $result; 
+    }
+    public function deleteData($id)
+    {
+        $sql = "DELETE FROM student WHERE student.id = :id";
+        
+        $result = DB::delete($sql, [
+            'id' => $id,
+        ]);
+
+        return response()->json(['result' => $result]);
     }
 
     
